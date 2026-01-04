@@ -10,6 +10,6 @@ namespace GamblingApp.Data
     internal class GameResponse
     {
         [JsonPropertyName("data")]
-        public Game[] Data { get; set; }
+        public Game[] Games { get; set; }
     }
 }

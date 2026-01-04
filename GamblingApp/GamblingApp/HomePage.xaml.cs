@@ -49,7 +49,7 @@ namespace GamblingApp
                 }
 
                 var body = await response.Content.ReadAsStringAsync();
-                Game[] games = JsonSerializer.Deserialize<GameResponse>(body).Data;
+                Game[] games = JsonSerializer.Deserialize<GameResponse>(body).Games;
 
                 gameListView.ItemsSource = games;
                 //gameListView.ItemsSource = games.Where(g => g.ScoreTeam1 != null);
