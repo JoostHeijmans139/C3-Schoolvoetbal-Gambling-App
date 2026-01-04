@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -10,8 +11,10 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Windows.Storage;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Protection.PlayReady;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,11 +29,87 @@ namespace GamblingApp
         public MainWindow()
         {
             this.InitializeComponent();
+            contentFrame.Navigate(typeof(HomePage));
+            rootGrid.DataContext = new PointsViewModel();
+
+            this.Closed += MainWindow_Closed;
+            LoadPoints();
         }
 
-        private void myButton_Click(object sender, RoutedEventArgs e)
+        private void navigationSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
         {
-            myButton.Content = "Clicked";
+            var selectedItem = sender.SelectedItem;
+            var selectedIndex = sender.Items.IndexOf(selectedItem);
+
+            switch (selectedIndex)
+            {
+                case 0:
+                    contentFrame.Navigate(typeof(HomePage));
+                    break;
+                case 1:
+                    contentFrame.Navigate(typeof(HomePage));
+                    break;
+                case 2:
+                    contentFrame.Navigate(typeof(HomePage));
+                    break;
+                case 3:
+                    contentFrame.Navigate(typeof(HomePage));
+                    break;
+                default:
+                    contentFrame.Navigate(typeof(HomePage));
+                    break;
+            }
+        }
+
+        public void AddPoints(int points)
+        {
+            var vm = (PointsViewModel)rootGrid.DataContext;
+            vm.Points += points;
+
+            SavePoints();
+        }
+
+        public void SetPoints(int points)
+        {
+            var vm = (PointsViewModel)rootGrid.DataContext;
+            vm.Points = points;
+
+            SavePoints();
+        }
+
+        public int GetPoints()
+        {
+            var vm = (PointsViewModel)rootGrid.DataContext;
+            return vm.Points;
+        }
+
+        public void SavePoints()
+        {
+            var vm = (PointsViewModel)rootGrid.DataContext;
+            var localSettings = ApplicationData.GetDefault().LocalSettings;
+            localSettings.Values["points"] = vm.Points;
+        }
+
+        public void LoadPoints()
+        {
+            var vm = (PointsViewModel)rootGrid.DataContext;
+            var localSettings = ApplicationData.GetDefault().LocalSettings;
+
+            if (!localSettings.Values.TryGetValue("points", out var points))
+            {
+                vm.Points = 10;
+            }
+            else vm.Points = (int)points;
+        }
+
+        public void MainWindow_Closed(object sender, WindowEventArgs e)
+        {
+            SavePoints();
+        }
+
+        private void pointsButton_Click(object sender, RoutedEventArgs e)
+        {
+            contentFrame.Navigate(typeof(BetHistoryPage));
         }
     }
 }

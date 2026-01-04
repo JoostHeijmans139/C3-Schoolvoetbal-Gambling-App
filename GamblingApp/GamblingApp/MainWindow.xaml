@@ -9,7 +9,22 @@
     mc:Ignorable="d"
     Title="GamblingApp">
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button x:Name="myButton" Click="myButton_Click">Click Me</Button>
-    </StackPanel>
+    <Grid x:Name="rootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="9*"/>
+        </Grid.RowDefinitions>
+        <SelectorBar x:Name="navigationSelectorBar" SelectionChanged="navigationSelectorBar_SelectionChanged">
+            <SelectorBarItem Text="Home" IsSelected="True"/>
+            <SelectorBarItem Text="page 2"/>
+            <SelectorBarItem Text="page 3"/>
+        </SelectorBar>
+        <Button x:Name="pointsButton" Margin="0,0,10,0" HorizontalAlignment="Right" Click="pointsButton_Click">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock FontSize="15" Margin="0,0,10,0" VerticalAlignment="Center">Points:</TextBlock>
+                <InfoBadge FontSize="15" VerticalAlignment="Center" Value="{Binding Points, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+        </Button>
+        <Frame Grid.Row="1" x:Name="contentFrame"/>
+    </Grid>
 </Window>
