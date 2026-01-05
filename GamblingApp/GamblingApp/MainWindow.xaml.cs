@@ -30,7 +30,9 @@ namespace GamblingApp
         {
             this.InitializeComponent();
             contentFrame.Navigate(typeof(HomePage));
-            rootGrid.DataContext = new PointsViewModel();
+            rootGrid.DataContext = App.PointsVM;
+
+            EvaluateBets();
 
             this.Closed += MainWindow_Closed;
             LoadPoints();
@@ -61,33 +63,10 @@ namespace GamblingApp
             }
         }
 
-        public void AddPoints(int points)
-        {
-            var vm = (PointsViewModel)rootGrid.DataContext;
-            vm.Points += points;
-
-            SavePoints();
-        }
-
-        public void SetPoints(int points)
-        {
-            var vm = (PointsViewModel)rootGrid.DataContext;
-            vm.Points = points;
-
-            SavePoints();
-        }
-
-        public int GetPoints()
-        {
-            var vm = (PointsViewModel)rootGrid.DataContext;
-            return vm.Points;
-        }
-
         public void SavePoints()
         {
-            var vm = (PointsViewModel)rootGrid.DataContext;
             var localSettings = ApplicationData.GetDefault().LocalSettings;
-            localSettings.Values["points"] = vm.Points;
+            localSettings.Values["points"] = App.PointsVM.Points;
         }
 
         public void LoadPoints()
@@ -97,9 +76,9 @@ namespace GamblingApp
 
             if (!localSettings.Values.TryGetValue("points", out var points))
             {
-                vm.Points = 10;
+                App.PointsVM.Points = 10;
             }
-            else vm.Points = (int)points;
+            else App.PointsVM.Points = (int)points;
         }
 
         public void MainWindow_Closed(object sender, WindowEventArgs e)
