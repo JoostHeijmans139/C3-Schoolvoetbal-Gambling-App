@@ -89,6 +89,8 @@ namespace GamblingApp
         private void pointsButton_Click(object sender, RoutedEventArgs e)
         {
             contentFrame.Navigate(typeof(BetHistoryPage));
+            navigationSelectorBar.SelectedItem = null;
+        }
         }
     }
 }
