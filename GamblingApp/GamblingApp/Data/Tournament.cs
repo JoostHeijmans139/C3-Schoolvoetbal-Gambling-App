@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GamblingApp.Data
 {
-    internal class Tournament
+    public class Tournament
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
