@@ -16,6 +16,7 @@ using Microsoft.UI.Xaml.Navigation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using GamblingApp.Data;
+using System.Threading;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,37 +31,12 @@ namespace GamblingApp
         public HomePage()
         {
             this.InitializeComponent();
-            GetGames();
         }
 
-        public async void GetGames()
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            try
-            {
-                var client = new HttpClient();
-                var response = await client.GetAsync("http://schoolvoetbal.test/api/wedstrijden");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    messageInfoBar.Severity = InfoBarSeverity.Error;
-                    messageInfoBar.Content = "Kon geen verbinding maken met de server:\n" + response.Content.ReadAsStringAsync();
-                    messageInfoBar.IsOpen = true;
-                    return;
-                }
-
-                var body = await response.Content.ReadAsStringAsync();
-                Game[] games = JsonSerializer.Deserialize<GameResponse>(body).Games;
-
-                gameListView.ItemsSource = games;
-                //gameListView.ItemsSource = games.Where(g => g.ScoreTeam1 != null);
-            }
-            catch (HttpRequestException exception)
-            {
-                messageInfoBar.Severity = InfoBarSeverity.Error;
-                messageInfoBar.Content = "Kon geen verbinding maken met de server:\n" + exception.Message;
-                messageInfoBar.IsOpen = true;
-            }
-            loadingProgressRing.IsActive = false;
+            base.OnNavigatedTo(e);
+            gameListView.DataContext = App.GamesVM;
         }
     }
 }
