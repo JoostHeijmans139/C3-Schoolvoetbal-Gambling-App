@@ -16,7 +16,14 @@ namespace GamblingApp
             get => _points;
             set
             {
-                _points = value;
+                if (value <= 0)
+                {
+                    _points = 10;
+                }
+                else
+                {
+                    _points = value;
+                }
                 OnPropertyChanged();
             }
         }
