@@ -1,0 +1,36 @@
+<ContentDialog
+    x:Class="GamblingApp.BetDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:GamblingApp"
+    xmlns:data="using:GamblingApp.Data"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <ContentDialog.Title>
+        <TextBlock FontSize="30">Inzetten</TextBlock>
+    </ContentDialog.Title>
+    <StackPanel MinWidth="500" Spacing="10">
+        <TextBlock FontSize="20" x:Name="tournamentTitleTextBlock"/>
+        <TextBlock FontSize="15" x:Name="gameDescriptionTextBlock"/>
+
+        <StackPanel Spacing="5">
+            <TextBlock FontWeight="SemiBold">Winnende team:</TextBlock>
+            <ComboBox x:Name="teamComboBox" Width="200" SelectionChanged="teamComboBox_SelectionChanged" DisplayMemberPath="Name"/>
+        </StackPanel>
+
+        <StackPanel Spacing="5">
+            <TextBlock FontWeight="SemiBold">Inzet</TextBlock>
+            <NumberBox x:Name="amountNumberBox" Width="200" HorizontalAlignment="Left" ValueChanged="amountNumberBox_ValueChanged"  SpinButtonPlacementMode="Inline" Value="5" Minimum="1" SmallChange="1"/>
+        </StackPanel>
+
+        <TextBlock x:Name="summaryTextBlock"/>
+
+        <StackPanel Orientation="Horizontal" Spacing="15" Margin="0,10,0,0">
+            <Button Background="#bbbbba" Foreground="Black" x:Name="betButton" Click="betButton_Click">Inzetten</Button>
+            <Button x:Name="cancelButton" Click="cancelButton_Click">Annuleren</Button>
+        </StackPanel>
+    </StackPanel>
+</ContentDialog>
