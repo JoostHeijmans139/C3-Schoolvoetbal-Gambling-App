@@ -18,13 +18,6 @@
             <SelectorBarItem Text="Home" IsSelected="True"/>
             <SelectorBarItem Text="Toekomstige wedstrijden"/>
         </SelectorBar>
-        <Button x:Name="pointsButton" Margin="0,0,10,0" HorizontalAlignment="Right" Click="pointsButton_Click">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock FontSize="15" Margin="0,0,10,0" VerticalAlignment="Center">Points:</TextBlock>
-                <InfoBadge FontSize="15" VerticalAlignment="Center" Value="{Binding Points, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            </StackPanel>
-        </Button>
-        <Frame Grid.Row="1" x:Name="contentFrame"/>
         <ProgressRing Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="loadingProgressRing" Width="100" Height="100" IsActive="True"/>
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
             <Button x:Name="refreshButton" Click="refreshButton_Click">
@@ -37,5 +30,7 @@
                 </StackPanel>
             </Button>
         </StackPanel>
+        <Frame Grid.Row="1" x:Name="contentFrame" Opacity="0.4" IsHitTestVisible="False"/>
+        <InfoBar Grid.Row="1" x:Name="messageInfoBar" IsOpen="False"></InfoBar>
     </Grid>
 </Window>

@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.Json;
+using System.Threading.Tasks;
+using GamblingApp.Data;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -29,13 +32,92 @@ namespace GamblingApp
         public MainWindow()
         {
             this.InitializeComponent();
-            contentFrame.Navigate(typeof(HomePage));
             rootGrid.DataContext = App.PointsVM;
 
             EvaluateBets();
 
             this.Closed += MainWindow_Closed;
             LoadPoints();
+        }
+
+        public async void EvaluateBets()
+        {
+            await Task.WhenAll(GetGames(), BetStorage.LoadBets());
+
+            var pendingBets = BetStorage.bets.Where(bet => bet.Status == BettingStatus.Pending);
+
+            foreach (var bet in pendingBets)
+            {
+                var game = App.GamesVM.Games.Where(game => game.Id == bet.Game.Id).First();
+                if (game.ScoreTeam1 != null && game.ScoreTeam2 != null)
+                {
+                    if (game.ScoreTeam1 == game.ScoreTeam2)
+                    {
+                        bet.Status = BettingStatus.Draw;
+                        App.PointsVM.Points += bet.Amount;
+                        continue;
+                    }
+
+
+                    bool isteam1winner = game.ScoreTeam1 > game.ScoreTeam2;
+                    bool isBetOnTeam1 = game.Team1.Id == bet.Team.Id;
+                    bool isBetCorrect = isteam1winner == isBetOnTeam1;
+
+                    if (isBetCorrect)
+                    {
+                        bet.Status = BettingStatus.Won;
+                        App.PointsVM.Points += bet.Amount * 2;
+                    }
+                    else
+                    {
+                        bet.Status = BettingStatus.Lost;
+                    }
+                }
+            }
+        }
+
+        public async Task GetGames()
+        {
+            try
+            {
+                var client = new HttpClient();
+                var response = await client.GetAsync("http://schoolvoetbal.test/api/wedstrijden");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    messageInfoBar.Severity = InfoBarSeverity.Error;
+                    messageInfoBar.Content = "Kon geen verbinding maken met de server:\n" + await response.Content.ReadAsStringAsync();
+                    messageInfoBar.IsOpen = true;
+                }
+                else
+                {
+                    var body = await response.Content.ReadAsStringAsync();
+                    var games = JsonSerializer.Deserialize<GameResponse>(body).Games;
+                    App.GamesVM.Games = new System.Collections.ObjectModel.ObservableCollection<Game>(games);
+                }
+            }
+            catch (HttpRequestException exception)
+            {
+                messageInfoBar.Severity = InfoBarSeverity.Error;
+                messageInfoBar.Content = "Kon geen verbinding maken met de server:\n" + exception.Message;
+                messageInfoBar.IsOpen = true;
+            }
+            catch (JsonException exception)
+            {
+                messageInfoBar.Severity = InfoBarSeverity.Error;
+                messageInfoBar.Content = "Fout bij verwerken van de wedstrijden:\n" + exception.Message;
+                messageInfoBar.IsOpen = true;
+            }
+            loadingProgressRing.IsActive = false;
+            contentFrame.Opacity = 1;
+            contentFrame.IsHitTestVisible = true;
+            CheckBets();
+        }
+
+        public void CheckBets()
+        {
+            var games = App.GamesVM.Games;
+            var bets = BetStorage.bets;
         }
 
         private void navigationSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
@@ -49,16 +131,9 @@ namespace GamblingApp
                     contentFrame.Navigate(typeof(HomePage));
                     break;
                 case 1:
-                    contentFrame.Navigate(typeof(HomePage));
-                    break;
-                case 2:
-                    contentFrame.Navigate(typeof(HomePage));
-                    break;
-                case 3:
-                    contentFrame.Navigate(typeof(HomePage));
+                    contentFrame.Navigate(typeof(GamblePage));
                     break;
                 default:
-                    contentFrame.Navigate(typeof(HomePage));
                     break;
             }
         }
@@ -71,7 +146,6 @@ namespace GamblingApp
 
         public void LoadPoints()
         {
-            var vm = (PointsViewModel)rootGrid.DataContext;
             var localSettings = ApplicationData.GetDefault().LocalSettings;
 
             if (!localSettings.Values.TryGetValue("points", out var points))
@@ -81,9 +155,10 @@ namespace GamblingApp
             else App.PointsVM.Points = (int)points;
         }
 
-        public void MainWindow_Closed(object sender, WindowEventArgs e)
+        public async void MainWindow_Closed(object sender, WindowEventArgs e)
         {
             SavePoints();
+            await BetStorage.SaveBets();
         }
 
         private void pointsButton_Click(object sender, RoutedEventArgs e)
