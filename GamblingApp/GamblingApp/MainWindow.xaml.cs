@@ -91,6 +91,14 @@ namespace GamblingApp
             contentFrame.Navigate(typeof(BetHistoryPage));
             navigationSelectorBar.SelectedItem = null;
         }
+
+        private void refreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            loadingProgressRing.IsActive = true;
+            contentFrame.Opacity = 0.4;
+            contentFrame.IsHitTestVisible = false;
+
+            EvaluateBets();
         }
     }
 }

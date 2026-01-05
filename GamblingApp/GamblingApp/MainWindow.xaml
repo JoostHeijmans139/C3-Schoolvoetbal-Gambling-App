@@ -25,5 +25,17 @@
             </StackPanel>
         </Button>
         <Frame Grid.Row="1" x:Name="contentFrame"/>
+        <ProgressRing Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="loadingProgressRing" Width="100" Height="100" IsActive="True"/>
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button x:Name="refreshButton" Click="refreshButton_Click">
+                <FontIcon Glyph="&#xE72C;"/>
+            </Button>
+            <Button x:Name="pointsButton" Margin="0,0,10,0" Click="pointsButton_Click">
+                <StackPanel Orientation="Horizontal">
+                    <InfoBadge FontSize="15" VerticalAlignment="Center" Value="{Binding Points, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock FontSize="15" Margin="5,0,0,0" VerticalAlignment="Center">Punten</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
     </Grid>
 </Window>
