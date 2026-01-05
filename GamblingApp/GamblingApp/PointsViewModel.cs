@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GamblingApp
 {
-    internal class PointsViewModel : INotifyPropertyChanged
+    public class PointsViewModel : INotifyPropertyChanged
     {
         private int _points = 10;
         public int Points
