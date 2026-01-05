@@ -45,6 +45,8 @@ namespace GamblingApp
             m_window.Activate();
         }
 
+        public static PointsViewModel PointsVM { get; } = new();
+        public static GamesViewModel GamesVM { get; } = new();
         private Window? m_window;
     }
 }
