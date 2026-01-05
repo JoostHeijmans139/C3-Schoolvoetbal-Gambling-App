@@ -26,6 +26,7 @@ namespace GamblingApp
         public BetHistoryPage()
         {
             InitializeComponent();
+            historyListView.ItemsSource = BetStorage.bets;
         }
     }
 }
